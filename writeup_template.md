@@ -1,10 +1,6 @@
-## Writeup Template
+# Advanced Lane Finding
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
-**Advanced Lane Finding Project**
+## Project goals
 
 The goals / steps of this project are the following:
 
@@ -27,15 +23,27 @@ The goals / steps of this project are the following:
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./project_video.mp4 "Video"
 
-## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
+## Submitted files
 
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+The submission includes the following files:
 
----
+* `advanced-lane-detection.ipynb` is a Jupiter notebook with the project code;
+* `output_images/project_video.mp4` is a video output produced by the pipeline;
+* `README.md` is a report summarizing the results
 
-### Writeup / README
+## Pipeline description
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
+As a general approach, I decided to split the pipeline into a series of steps,
+each doing a specific transformation of the input image and them, if provided,
+passing the result to the next stage in the processing pipeline. This structure
+allowed me to work on the pipeline incrementally, adding more processing steps
+as the project progressed. 
+
+The base class for a processing stage is `PipelineStage`
+
+### Camera calibration
+
+The camera was calibrated on the images provided with the project. The code
 
 You're reading it!
 
