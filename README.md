@@ -178,7 +178,8 @@ multiple color channels);
 (reject abnormally curved lines, lines highly off-center);
 3. When tracking line points, keep track of points for each y-coordinate
 separately and reject individual points that vary too much. 
-
+4. Apply machine learning image recognition models to detect lane lines and
+filter out the noise.
 
 
 
