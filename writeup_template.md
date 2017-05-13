@@ -15,12 +15,12 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[image1]: ./output_images/calibration_test.png "Undistorted chessboard image"
+[image2]: ./output_images/undistorted.png "Undistorted road image"
+[image3]: ./output_images/v_channel.png "V channel extracted"
+[image4]: ./output_images/color_threshold.png "Color threshold"
+[image5]: ./output_images/sobel_threshold.png "Sobel threshold"
+[image6]: ./output_images/combined_threshold.png "Combined image"
 [video1]: ./project_video.mp4 "Video"
 
 ## Submitted files
@@ -39,38 +39,57 @@ passing the result to the next stage in the processing pipeline. This structure
 allowed me to work on the pipeline incrementally, adding more processing steps
 as the project progressed. 
 
-The base class for a processing stage is `PipelineStage`
+The base class for a processing stage is `PipelineStage`, defined in cell #2.
+Other steps inherit from this class and override its `process()` method to do
+specific work on the input data.
 
 ### Camera calibration
 
-The camera was calibrated on the images provided with the project. The code
+The camera was calibrated on the chessboard images, provided with the
+project. The code for this step is provided in the cell #3. The class
+`CorrectDistortion` represents the pipeline stage that undistorts the input
+image and passes it along.
 
-You're reading it!
+Before invoking, the class method `CorrectDistortion.calibrate()` must be called
+with the chessboard images as input. This method calculates the distortion
+coefficients, invoking `cv2.findChessboardCorners()` and
+`cv2.calibrateCamera()`. The coefficients are stored in class variables and used
+to undistort the input image during the normal processing.
 
-### Camera Calibration
+The example of undistorted chessboard image is as follows:
 
-#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+![Undistorted calibration image][image1]
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+When applied to the road images, the transform produces the following output:
 
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
+![Undistorted real image][image2]
 
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+# Color and gradient transform
 
-![alt text][image1]
+I found that in order to achieve reliable road line detection, it's best to
+convert the original RGB image into HSV (Hue-Saturation-Value) space and then
+use the V channel as a source. V channel provides best contrast for both yellow
+and white lane lines under different lighting conditions:
 
-### Pipeline (single images)
+![V channel extracted][image3]
 
-#### 1. Provide an example of a distortion-corrected image.
+The code for V channel extraction is provided in cell #6. 
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![alt text][image2]
+Having the V channel extracted, I apply the following transforms separately:
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+* I apply color thresholding to remove irrelevant details;
+* Sobel magnitude thresholding is used to detect the value gradient changes.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+Both results are then combined with logical OR operartion to produce a resulting
+binary image:
 
-![alt text][image3]
+![Value threshold applied][image4]
+![Sobel magnitude thesholding][image5]
+![Resulting image][image6]
+
+The code for these tranforms is located in cells #7-#9 in the notebook.
+
+
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
