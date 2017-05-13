@@ -167,4 +167,18 @@ Here is a link to the [output video](./output_images/project_video.mp4).
 ## Discussion
 
 The pipeline I've come up with performs reasonably well on the project
-video. However, it's performance is not ideal on the challenge videos. 
+video. However, it's performance is not ideal on the challenge videos that have
+worse conditions. I think that the following iprovements can be made to achieve
+better lane detection:
+
+1. Use additional source image transformations to produce better input for the
+line detector (enhance image contrast, use gradient angle threshold, use
+multiple color channels);
+2. Use heuristics to analyze the approximated lane lines for individual frames
+(reject abnormally curved lines, lines highly off-center);
+3. When tracking line points, keep track of points for each y-coordinate
+separately and reject individual points that vary too much. 
+
+
+
+
