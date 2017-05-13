@@ -36,18 +36,18 @@ The submission includes the following files:
 ## Pipeline description
 
 As a general approach, I decided to split the pipeline into a series of steps,
-each doing a specific transformation of the input image and them, if provided,
+each doing a specific transformation of the input image and then, if provided,
 passing the result to the next stage in the processing pipeline. This structure
 allowed me to work on the pipeline incrementally, adding more processing steps
 as the project progressed. 
 
-The base class for a processing stage is `PipelineStage`, defined in cell #2.
-Other steps inherit from this class and override its `process()` method to do
-specific work on the input data.
+The base class for a processing stage is `PipelineStage`, defined in the cell
+`#2`.  Other steps inherit from this class and override its `process()` method
+to do specific work on the input data.
 
 ### Camera calibration
 
-The camera was calibrated on the chessboard images, provided with the
+The camera was calibrated on the chessboard images, supplied with the
 project. The code for this step is provided in the cell #3. The class
 `CorrectDistortion` represents the pipeline stage that undistorts the input
 image and passes it along.
@@ -118,32 +118,35 @@ in the lectures. The code for this processing step is located in the cell #12 in
 the notebook. There are 2 main classes that do the work of lane detection and
 approximation, `Convolver` and `LaneTracker`, described below.
 
-The `Convolver` class is responsibe for finding the lane line points in an
-image. To do that, I split the image into 9 horizontal layers, sum up all the
-pixels by Y axis to obtain the 1-dimensional array, and then apply a convolution
-operation with the 50-pixel window to maximize the effect of "hot pixels". Then,
-I identify the peaks in the resulting convolved signal, separately for left and
-right lanes. To reduce the noise, I only search for the peaks in the 200-pixel
-window, the center of which is obtained from the previously found peaks.
+The `Convolver` class is responsibe for finding the lane line points in
+individual images. To do that, I split the image into 9 horizontal layers, sum
+up all the pixels by Y axis to obtain the 1-dimensional array, and then apply a
+convolution operation with the 50-pixel window to maximize the effect of "hot
+pixels". Then, I identify the peaks in the resulting convolved signal,
+separately for left and right lane boundaries. To reduce the noise, I only
+search for the peaks in the 200-pixel window, the center of which is obtained
+from the previously found peaks.
 
 The X-coordinates for left and right lane lines are stored in the instance of
 `LaneTracker` class, which keeps track of line points across approx. 10 last
 frames. This class is also responsible for fitting the 2nd order polynomial that
-approximates the lane. Instead of approximating left and right lane boundaries
-separately, I decided to approximate the middle line, given that the width of
-the lane is constant. This approach allows for a smoother approximation, because
-both left and right boundary points contribute collectively to the end result.
+approximates the entire lane. Instead of approximating left and right lane
+boundaries separately, I decided to track the middle line, given that the width
+of the lane is constant (the width value is found during the initialization of
+the `Convolver` instance). This approach allows for a smoother approximation,
+because both left and right boundary points contribute collectively to the end
+result.
 
 ### Lane curvature and vehicle position
 
-As soon as I have the coefficients of the 2nd order polynomial that approximates
-the lane, I can calculate the approximate curvature of the lane and the position
-of the vehicle with respect to center. This is done as a part of the final stage
-in the processing pipeline, represented by the class `VisualizeLane` (cell
+As soon as I have the coefficients of the polynomial that approximates the lane,
+I can calculate the approximate curvature of the lane and the position of the
+vehicle with respect to the center. This is done as a part of the final stage in
+the processing pipeline, represented by the class `VisualizeLane` (cell
 #12). The value in pixels is converted to metric values using the coefficients
 `ym_per_pix` and `xm_per_pix`, respectively. The code for these calculations is
 located in methods `curvature()` and `off_center()` of the `VisualizeLane`
-class. 
+class.
 
 ### Lane visualization
 
@@ -158,7 +161,7 @@ Here is the example of the single output image, produced by the pipeline:
 ![Single output image][image8]
 
 The green stripe represents the approximated lane. In addition, the line
-points, extracted from the source image, are also displayed in red and blue. 
+points, extracted from the source image, are also displayed with red and blue. 
 
 ### Video processing
 
